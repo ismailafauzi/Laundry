@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aplikasi Input & Riwayat Data Laundry Santri</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Supabase JS Client -->
+  <script src="https://ijipnnhgbzwatdzbdlek.supabase.co/rest/v1/"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
+
+  <!-- TOP BAR / HEADER -->
+  <header class="bg-indigo-700 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="shirt" class="w-7 h-7 text-indigo-200"></i>
+        <div>
+          <h1 class="text-xl font-bold leading-tight">Data Laundry Santri</h1>
+          <p class="text-xs text-indigo-200">Terintegrasi Tabel 'santri' & 'laundry_logs' Supabase</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 text-sm">
+        <div id="dbStatusBadge" class="flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-200 border border-amber-400/30">
+          <span class="w-2 h-2 rounded-full bg-amber-400 mr-1.5 animate-pulse"></span>
+          <span>Lokal (Belum Connect Supabase)</span>
+        </div>
+        <button onclick="toggleConfigModal()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-3 py-1.5 rounded-lg text-xs font-medium border border-indigo-500 flex items-center gap-1 transition">
+          <i data-lucide="settings" class="w-3.5 h-3.5"></i> Setting Supabase
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 mt-6 space-y-6">
+
+    <!-- MODAL KONFIGURASI SUPABASE -->
+    <div id="configModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="database" class="w-5 h-5 text-indigo-600"></i> Pengaturan Kredensial Supabase
+          </h3>
+          <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <p class="text-xs text-slate-500">
+          Isi URL dan Anon Key Supabase Anda agar data nama santri otomatis ditarik dari tabel <b>santri</b> dan transaksi disimpan di tabel <b>laundry_logs</b>.
+        </p>
+        <div class="space-y-3 text-sm">
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Supabase Project URL</label>
+            <input type="text" id="supabaseUrlInput" placeholder="https://xyz...supabase.co" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs font-mono">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">Supabase Anon Key</label>
+            <textarea id="supabaseKeyInput" rows="3" placeholder="eyJhY..." class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs font-mono"></textarea>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="toggleConfigModal()" class="px-4 py-2 text-slate-600 text-xs font-medium rounded-lg hover:bg-slate-100">Batal</button>
+          <button onclick="saveSupabaseConfig()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-medium rounded-lg hover:bg-indigo-700 shadow-sm">Simpan & Hubungkan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Transaksi</p>
+        <h3 id="statTotalRows" class="text-2xl font-black text-slate-800 mt-1">0</h3>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Berat (Kg)</p>
+        <h3 id="statTotalBerat" class="text-2xl font-black text-indigo-600 mt-1">0 <span class="text-xs font-normal">kg</span></h3>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Pakaian</p>
+        <h3 id="statTotalPakaian" class="text-2xl font-black text-emerald-600 mt-1">0 <span class="text-xs font-normal">pcs</span></h3>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Santri Terdaftar</p>
+        <h3 id="statTotalSantri" class="text-2xl font-black text-amber-600 mt-1">0</h3>
+      </div>
+    </div>
+
+    <!-- FORM INPUT & RIWAYAT TABS -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="border-b border-slate-200 bg-slate-50 px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+        <div class="flex space-x-2">
+          <button id="tabFormBtn" onclick="switchTab('form')" class="px-4 py-2 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> Form Input Laundry
+          </button>
+          <button id="tabDataBtn" onclick="switchTab('data')" class="px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-200/60 flex items-center gap-1.5">
+            <i data-lucide="table" class="w-4 h-4"></i> Riwayat & Tabel Data
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 1: FORM INPUT -->
+      <div id="tabForm" class="p-4 sm:p-6 space-y-6">
+        <form id="laundryForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+          
+          <!-- SEKSI 1: UTAMA & IDENTITAS -->
+          <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 space-y-4">
+            <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="user" class="w-4 h-4 text-indigo-600"></i> Informasi Utama Santri
+            </h4>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal</label>
+                <input type="date" id="inputTanggal" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Kamar</label>
+                <select id="inputKamar" onchange="loadSantriOptions()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none font-medium text-indigo-700">
+                  <option value="Al-Madinah">Al-Madinah</option>
+                  <option value="Makkah">Makkah</option>
+                  <option value="Lainnya">Lainnya / Umum</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Santri (Dari Tabel Supabase)</label>
+                <select id="inputNamaSelect" onchange="handleNamaSelectChange()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                  <option value="">-- Menghubungkan Supabase... --</option>
+                </select>
+                <input type="text" id="inputNamaCustom" placeholder="Ketik nama manual..." class="hidden mt-2 w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori / Status</label>
+                <select id="inputKategori" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                  <option value="Santri">Santri</option>
+                  <option value="Pengurus">Pengurus / Ustadz</option>
+                  <option value="Tamu">Tamu / Staf</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEKSI 2: PENIMBANGAN BERAT -->
+          <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-100 space-y-4">
+            <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="scale" class="w-4 h-4 text-amber-600"></i> Rincian Berat Penimbangan (Kg)
+            </h4>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <!-- Berat Wajib -->
+              <div class="bg-white p-3 rounded-lg border border-slate-200">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Berat Wajib (Kg)</label>
+                <div class="flex items-center space-x-1">
+                  <button type="button" onclick="adjustValue('inputBeratWajib', -0.5, true)" class="stepper-btn w-9 h-9 bg-slate-100 active:bg-slate-200 text-slate-700 rounded-lg font-bold flex items-center justify-center border text-lg">-</button>
+                  <input type="number" step="0.1" min="0" id="inputBeratWajib" value="0" oninput="calcTotalBerat()" class="w-full text-center py-1.5 font-bold text-slate-800 text-base outline-none">
+                  <button type="button" onclick="adjustValue('inputBeratWajib', 0.5, true)" class="stepper-btn w-9 h-9 bg-slate-100 active:bg-slate-200 text-slate-700 rounded-lg font-bold flex items-center justify-center border text-lg">+</button>
+                </div>
+              </div>
+
+              <!-- Berat Tambahan -->
+              <div class="bg-white p-3 rounded-lg border border-slate-200">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Berat Tambahan (Kg)</label>
+                <div class="flex items-center space-x-1">
+                  <button type="button" onclick="adjustValue('inputBeratTambahan', -0.5, true)" class="stepper-btn w-9 h-9 bg-slate-100 active:bg-slate-200 text-slate-700 rounded-lg font-bold flex items-center justify-center border text-lg">-</button>
+                  <input type="number" step="0.1" min="0" id="inputBeratTambahan" value="0" oninput="calcTotalBerat()" class="w-full text-center py-1.5 font-bold text-slate-800 text-base outline-none">
+                  <button type="button" onclick="adjustValue('inputBeratTambahan', 0.5, true)" class="stepper-btn w-9 h-9 bg-slate-100 active:bg-slate-200 text-slate-700 rounded-lg font-bold flex items-center justify-center border text-lg">+</button>
+                </div>
+              </div>
+
+              <!-- Total Berat -->
+              <div class="bg-amber-100/70 p-3 rounded-lg border border-amber-200 flex flex-col justify-center items-center">
+                <span class="text-xs font-bold text-amber-800 uppercase">Total Berat Disimpan</span>
+                <div class="text-2xl font-black text-amber-900 mt-1"><span id="lblTotalBerat">0.0</span> <span class="text-sm font-semibold">Kg</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEKSI 3: INPUT ITEM PAKAIAN -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="shirt" class="w-4 h-4 text-slate-600"></i> Rincian Pakaian & Barang (Gunakan Tombol +/-)
+            </h4>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" id="itemsContainer"></div>
+          </div>
+
+          <!-- SEKSI 4: KEUANGAN & CATATAN -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Rincian Cuci / Layanan</label>
+                <input type="text" id="inputRincianCuci" placeholder="Misal: Cuci + Setrika" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Total Biaya (Rp)</label>
+                <input type="number" min="0" id="inputTotalBiaya" placeholder="0" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-emerald-700 outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Catatan Tambahan</label>
+                <input type="text" id="inputCatatan" placeholder="Misal: Sarung luntur, dsb." class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBMIT BUTTONS -->
+          <div class="flex justify-end gap-3 pt-2">
+            <button type="button" onclick="resetForm()" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 text-sm font-semibold hover:bg-slate-100 transition">
+              Reset Form
+            </button>
+            <button type="submit" id="btnSubmit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-md hover:shadow-indigo-200 transition flex items-center gap-2">
+              <i data-lucide="save" class="w-4 h-4"></i> Simpan Data Laundry
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 2: RIWAYAT & TABEL DATA -->
+      <div id="tabData" class="hidden p-4 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <div class="relative w-full sm:w-64">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+              <input type="text" id="searchKeyword" oninput="renderTable()" placeholder="Cari nama santri..." class="w-full pl-9 pr-3 py-1.5 bg-white border rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <select id="filterKamar" onchange="renderTable()" class="px-3 py-1.5 bg-white border rounded-lg text-xs font-medium outline-none">
+              <option value="">Semua Kamar</option>
+              <option value="Al-Madinah">Al-Madinah</option>
+              <option value="Makkah">Makkah</option>
+            </select>
+            <input type="date" id="filterTanggal" onchange="renderTable()" class="px-3 py-1.5 bg-white border rounded-lg text-xs outline-none">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="exportToCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> Ekspor CSV
+            </button>
+            <button onclick="fetchDataFromSupabase()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-inner">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-800 text-white uppercase text-[10px] tracking-wider whitespace-nowrap sticky top-0">
+              <tr>
+                <th class="p-3 border-b border-slate-700 text-center">No</th>
+                <th class="p-3 border-b border-slate-700">Tanggal</th>
+                <th class="p-3 border-b border-slate-700">Kamar</th>
+                <th class="p-3 border-b border-slate-700">Nama Santri</th>
+                <th class="p-3 border-b border-slate-700 text-center">Total Berat</th>
+                <th class="p-3 border-b border-slate-700 text-center">Pakaian Utuh</th>
+                <th class="p-3 border-b border-slate-700">Rincian Barang Input</th>
+                <th class="p-3 border-b border-slate-700">Biaya</th>
+                <th class="p-3 border-b border-slate-700">Catatan</th>
+                <th class="p-3 border-b border-slate-700 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="laundryTableBody" class="divide-y divide-slate-200 bg-white"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- External App JS -->
+  <script src="app.js"></script>
+</body>
+</html>
