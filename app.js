@@ -67,8 +67,8 @@ function calcTotalBerat() {
 // INISIALISASI SUPABASE
 function initSupabase() {
   // Masukkan URL dan Key default Supabase milik Anda di sini agar otomatis terkoneksi:
-  const defaultUrl = ""; 
-  const defaultKey = "";
+  const defaultUrl = "https://ijipnnhgbzwatdzbdlek.supabase.co/rest/v1/"; 
+  const defaultKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqaXBubmhnYnp3YXRkemJkbGVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMjc3NDIsImV4cCI6MjEwMzkwMzc0Mn0.TviHZ5O25ZSif9DawhcywKD9c3d4bv3yGnLPGk6iMAU";
 
   const savedUrl = localStorage.getItem('laundry_supabase_url') || defaultUrl;
   const savedKey = localStorage.getItem('laundry_supabase_key') || defaultKey;
