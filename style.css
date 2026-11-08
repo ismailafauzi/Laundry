@@ -1,56 +1,48 @@
-/* -------------------------------------------------------------
-
-Custom Styles for Ma'had Al-Basiroh Laundry Data Management
-
-Palette: Islamic Emerald Green (#0B3C2D), Gold (#D4AF37), Cream Accent
-
-------------------------------------------------------------- */
+/* PALET WARNA UTAMA MA'HAD AL-BASHIROH */
+:root {
+  --color-primary: #0B3C2D;
+  --color-primary-light: #134E3A;
+  --color-gold: #D4AF37;
+  --color-gold-soft: #C5A059;
+  --color-bg-cream: #FBF9F4;
+  --color-border-cream: #E8E2CE;
+}
 
 body {
-font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--color-bg-cream);
+  color: #2D3748;
 }
 
-/* Header Gradient with Subtle Islamic Emerald Accent */
-.header-gradient {
-background: linear-gradient(135deg, #0B3C2D 0%, #134E3A 60%, #1A5E47 100%);
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
 }
 
-/* Touch-optimized Stepper Buttons */
-.stepper-btn {
-touch-action: manipulation;
-user-select: none;
--webkit-tap-highlight-color: transparent;
-transition: all 0.15s ease-in-out;
+/* Custom Stepper Button */
+button:active {
+  transform: scale(0.96);
 }
 
-.stepper-btn:active {
-transform: scale(0.92);
-}
-
-/* Hide default Chrome/Safari number input spinners */
+/* Chrome, Safari, Edge, Opera: Hilangkan Spinner Number Input */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
--webkit-appearance: none;
-margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-/* Hide Firefox number input spinners */
+/* Firefox */
 input[type=number] {
--moz-appearance: textfield;
+  -moz-appearance: textfield;
 }
 
-/* Custom Scrollbar for Clean UI */
-::-webkit-scrollbar {
-width: 6px;
-height: 6px;
+/* Smooth Horizontal Scrollbar */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
 }
-::-webkit-scrollbar-track {
-background: #f1f5f9;
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #F7F5EE;
 }
-::-webkit-scrollbar-thumb {
-background: #cbd5e1;
-border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-background: #0B3C2D;
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 4px;
 }
