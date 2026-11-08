@@ -1,0 +1,15 @@
+.stepper-btn {
+  touch-action: manipulation;
+}
+
+/* Chrome, Safari, Edge, Opera: hilangkan spinner panah default pada input number */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox: hilangkan spinner panah default */
+input[type=number] {
+  -moz-appearance: textfield;
+}
