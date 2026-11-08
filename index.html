@@ -33,20 +33,28 @@
       <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5">
         <div class="relative shrink-0">
           <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-[#D4AF37] p-1 bg-white shadow-md flex items-center justify-center">
-            <!-- CARA MENGGANTI FOTO/IKON BAJU: Ubah URL di bawah ini dengan link gambar Anda -->
+            <!-- UNTUK MENGGANTI LOGO BAJU/PESANTREN: Ganti URL di src di bawah ini -->
             <img id="headerLogoImg" src="https://ijipnnhgbzwatdzbdlek.supabase.co/storage/v1/object/public/assets/logo-albashiroh.png" 
                  onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shirt.svg';"
                  alt="Logo Al-Bashiroh" 
-                 class="w-full h-full object-contain rounded-full cursor-pointer" 
-                 onclick="toggleConfigModal()" title="Klik untuk Pengaturan Supabase">
+                 class="w-full h-full object-contain rounded-full">
           </div>
         </div>
-        <div class="text-center sm:text-left space-y-1">
-          <span class="text-xs font-bold text-[#D4AF37] tracking-wider uppercase">Sistem Terpadu Santri</span>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0B3C2D] font-serif leading-tight">
-            Portal Digital<br/>Pesantren Al Bashiroh Purwakarta
-          </h1>
-          <p class="text-xs sm:text-sm text-slate-500 max-w-lg pt-1">
+
+        <div class="text-center sm:text-left space-y-2.5 w-full">
+          <span class="inline-block px-3.5 py-1 bg-[#F4EFE0] text-[#0B3C2D] text-xs font-bold tracking-wider uppercase rounded-full border border-[#D4AF37]/40 shadow-sm">
+            Sistem Terpadu Santri
+          </span>
+          
+          <!-- HEADING DENGAN BACKGROUND HIJAU MEWAH -->
+          <div class="bg-gradient-to-r from-[#0B3C2D] to-[#134E3A] p-4 sm:p-5 rounded-2xl border border-[#D4AF37]/50 shadow-md">
+            <h1 class="text-xl sm:text-2xl font-extrabold text-[#FBF9F4] font-serif leading-tight">
+              Portal Digital<br/>
+              <span class="text-[#D4AF37]">Pesantren Al Bashiroh Purwakarta</span>
+            </h1>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-500 max-w-lg pt-0.5">
             Layanan pencatatan data cucian laundry santri, rincian item pakaian, dan penimbangan berat secara real-time.
           </p>
         </div>
@@ -264,34 +272,6 @@
             <tbody id="laundryTableBody" class="divide-y divide-[#E8E2CE] bg-white"></tbody>
           </table>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL SUPABASE CONFIG (DIBUKA DENGAN KLIK LOGO FOTO DI KIRI) -->
-  <div id="configModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-xl max-w-lg w-full p-6 space-y-4 border border-[#E8E2CE]">
-      <div class="flex justify-between items-center border-b border-[#E8E2CE] pb-3">
-        <h3 class="text-base font-bold text-[#0B3C2D] flex items-center gap-2">
-          <i data-lucide="settings" class="w-5 h-5 text-[#D4AF37]"></i> Pengaturan Kredensial Supabase
-        </h3>
-        <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-slate-600">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Supabase Project URL</label>
-          <input type="text" id="supabaseUrlInput" placeholder="https://xyz.supabase.co" class="w-full px-3 py-2 bg-[#FBF9F4] border border-[#E8E2CE] rounded-xl font-mono text-xs outline-none">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Supabase Anon Key</label>
-          <textarea id="supabaseKeyInput" rows="3" placeholder="eyJhY..." class="w-full px-3 py-2 bg-[#FBF9F4] border border-[#E8E2CE] rounded-xl font-mono text-xs outline-none"></textarea>
-        </div>
-      </div>
-      <div class="flex justify-end gap-2 pt-2">
-        <button onclick="toggleConfigModal()" class="px-4 py-2 text-slate-600 text-xs font-semibold rounded-xl hover:bg-slate-100">Batal</button>
-        <button onclick="saveSupabaseConfig()" class="px-4 py-2 bg-[#0B3C2D] text-white text-xs font-bold rounded-xl hover:bg-[#134E3A] shadow-sm">Simpan & Hubungkan</button>
       </div>
     </div>
   </div>
