@@ -1,15 +1,56 @@
-.stepper-btn {
-  touch-action: manipulation;
+/* -------------------------------------------------------------
+
+Custom Styles for Ma'had Al-Basiroh Laundry Data Management
+
+Palette: Islamic Emerald Green (#0B3C2D), Gold (#D4AF37), Cream Accent
+
+------------------------------------------------------------- */
+
+body {
+font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Chrome, Safari, Edge, Opera: hilangkan spinner panah default pada input number */
+/* Header Gradient with Subtle Islamic Emerald Accent */
+.header-gradient {
+background: linear-gradient(135deg, #0B3C2D 0%, #134E3A 60%, #1A5E47 100%);
+}
+
+/* Touch-optimized Stepper Buttons */
+.stepper-btn {
+touch-action: manipulation;
+user-select: none;
+-webkit-tap-highlight-color: transparent;
+transition: all 0.15s ease-in-out;
+}
+
+.stepper-btn:active {
+transform: scale(0.92);
+}
+
+/* Hide default Chrome/Safari number input spinners */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+-webkit-appearance: none;
+margin: 0;
 }
 
-/* Firefox: hilangkan spinner panah default */
+/* Hide Firefox number input spinners */
 input[type=number] {
-  -moz-appearance: textfield;
+-moz-appearance: textfield;
+}
+
+/* Custom Scrollbar for Clean UI */
+::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+::-webkit-scrollbar-track {
+background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+background: #cbd5e1;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #0B3C2D;
 }
